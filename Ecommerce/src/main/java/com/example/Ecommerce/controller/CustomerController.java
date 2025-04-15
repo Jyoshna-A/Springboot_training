@@ -14,18 +14,20 @@ import java.util.List;
 public class CustomerController {
     @Autowired
     CustomerService customerService;
+
     @GetMapping("allCustomers")
     public List<Customer> viewCustomers()
     {
         return customerService.viewAllCustomers();
 
     }
+
     @PostMapping("customerRegistration")
     public String customerRegistration(@RequestBody Customer customer) {
         try {
             System.out.println("Received Customer: " + customer);
-            customerService.customerRegistration(customer);
-            return "Customer Added Successfully";
+            return customerService.customerRegistration(customer);
+
         } catch (Exception e) {
             e.printStackTrace();
             return "Error occurred while registering the customer.";

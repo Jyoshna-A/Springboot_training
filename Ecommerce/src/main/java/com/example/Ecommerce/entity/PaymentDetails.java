@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="J_PaymentDetails")
+@Table(name="CJ_payment_details")
 public class PaymentDetails {
     private String paymentMethod;
     @Id

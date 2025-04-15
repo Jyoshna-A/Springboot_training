@@ -11,10 +11,11 @@ import java.util.List;
 public class CustomerService {
     @Autowired
     CustomerRepository customerRepository;
-    public void customerRegistration(Customer customer) {
+    public String customerRegistration(Customer customer) {
         String nextAccNo = generateNextAccountNumber();
         customer.setAccountNumber(nextAccNo);
         customerRepository.save(customer);
+        return "Account created and AccountId is "+nextAccNo;
 
     }
 

@@ -12,14 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="J_OrderDetails")
+@Table(name="CJ_Order_details")
 public class Order {
     @Id
     private String orderId;
     private String accountNumber;
     private String productId;
     private int quantity;
-    private float price;
-    @Value("New")
-    private String status;
+    private float price=0;
+    private String status="New";
 }
