@@ -9,6 +9,7 @@ import com.example.EcommerceSecondPart.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,6 +33,7 @@ public class OrderProcessingService {
 
     private final ConcurrentHashMap<String, Object> productLocks = new ConcurrentHashMap<>();
 
+
     @Scheduled(fixedDelay = 10000)
     public void fetchAndProcessNewOrders() {
         List<Order> newOrders = orderRepository.findByStatus("New");
@@ -41,48 +43,45 @@ public class OrderProcessingService {
         }
     }
 
+    @Transactional
     public void processOrder(Order order) {
         try {
-            Product product = productRepository.findById(order.getProductId()).orElse(null);
-            if (product == null) {
-                updateOrderStatus(order, "Failed - Product Not Found");
-                return;
-            }
 
-            Customer customer = customerRepository.findById(order.getAccountNumber()).orElse(null);
-            if (customer == null || customer.getPaymentDetails() == null ||
-                    !"active".equalsIgnoreCase(customer.getPaymentDetails().getStatus())) {
-                updateOrderStatus(order, "Failed - Invalid Payment Method");
-                return;
-            }
-
-
-            Object lock = productLocks.computeIfAbsent(product.getProductId(), k -> new Object());
+            Object lock = productLocks.computeIfAbsent(order.getProductId(), k -> new Object());
 
             synchronized (lock) {
 
-                product = productRepository.findById(order.getProductId()).orElse(null);
+                Product product = productRepository.findById(order.getProductId()).orElse(null);
                 if (product == null) {
-                    updateOrderStatus(order, "Failed - Product Not Found (Recheck)");
+                    updateOrderStatus(order, "Failed - Product Not Found");
                     return;
                 }
+
 
                 if (product.getStock() < order.getQuantity()) {
                     updateOrderStatus(order, "Failed - Not Enough Stock");
                     return;
                 }
 
+
+                product.setStock(product.getStock() - order.getQuantity());
+                productRepository.save(product);
+
+
+                Customer customer = customerRepository.findById(order.getAccountNumber()).orElse(null);
+                if (customer == null || customer.getPaymentDetails() == null ||
+                        !"active".equalsIgnoreCase(customer.getPaymentDetails().getStatus())) {
+                    updateOrderStatus(order, "Failed - Invalid Payment Method");
+                    return;
+                }
+
                 float total = product.getPricePerQuantity() * order.getQuantity();
                 order.setPrice(total);
                 order.setStatus("Success");
-
-                product.setStock(product.getStock() - order.getQuantity());
-
-                productRepository.save(product);
                 orderRepository.save(order);
-            }
 
-            System.out.println("Order " + order.getOrderId() + " processed successfully!");
+                System.out.println("Order " + order.getOrderId() + " processed successfully!");
+            }
 
         } catch (Exception e) {
             updateOrderStatus(order, "Failed - " + e.getMessage());
