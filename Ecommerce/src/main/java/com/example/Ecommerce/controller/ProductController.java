@@ -4,12 +4,10 @@ import com.example.Ecommerce.entity.Customer;
 import com.example.Ecommerce.entity.Product;
 import com.example.Ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -40,4 +38,9 @@ public class ProductController {
         }
     }
 
+    @PutMapping("updateProduct")
+   public Product updateProductStock(@Param("productId") String productId, @Param("stock") int stock)
+    {
+        return productService.updateProductStock(productId,stock);
+    }
 }

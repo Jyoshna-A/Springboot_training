@@ -44,4 +44,11 @@ public class ProductService {
     public List<String> viewProductCategories() {
         return productRepository.findAllCategories();
     }
+
+    public Product updateProductStock(String productId, int stock) {
+        Product product = productRepository.getReferenceById(productId);
+        product.setStock(stock);
+        return productRepository.save(product); // Persist changes
+    }
+
 }
