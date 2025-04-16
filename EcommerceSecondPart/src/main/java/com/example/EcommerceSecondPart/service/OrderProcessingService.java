@@ -43,7 +43,7 @@ public class OrderProcessingService {
         }
     }
 
-    @Transactional
+    
     public void processOrder(Order order) {
         try {
 
