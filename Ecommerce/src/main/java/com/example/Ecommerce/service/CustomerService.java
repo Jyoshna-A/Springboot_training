@@ -20,19 +20,45 @@ public class CustomerService {
     }
 
     private String generateNextAccountNumber() {
-        String lastAccNo = customerRepository.findLastAccountNumber(); // e.g., ACC000025
+        String lastAccNo = customerRepository.findLastAccountNumber();
         int nextNumber = 1;
 
         if (lastAccNo != null && lastAccNo.startsWith("ACC")) {
             nextNumber = Integer.parseInt(lastAccNo.substring(3)) + 1;
         } else {
-            nextNumber = 1;  // For the very first record
+            nextNumber = 1;
         }
 
-        return String.format("ACC%06d", nextNumber); // ACC000001, ACC000002 ...
+        return String.format("ACC%06d", nextNumber);
     }
 
     public List<Customer> viewAllCustomers() {
         return customerRepository.findAll();
     }
+
+    public Customer  getCustomerById(String accountId) {
+        return customerRepository.findById(accountId).orElse(null);
+    }
+
+    public String deleteCustomerById(String accId)
+    {
+        if(getCustomerById(accId)!=null) {
+            customerRepository.deleteById(accId);
+            return "Successfully deleted";
+        }
+        else
+        {
+            return "customerId not found";
+        }
+    }
+
+    public String updateCustomer(Customer customer) {
+        if (customerRepository.existsById(customer.getAccountNumber())) {
+            customerRepository.save(customer);
+            return "Customer details updated";
+        } else {
+            return "Customer not found";
+        }
+    }
+
 }

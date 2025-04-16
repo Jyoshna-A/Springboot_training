@@ -4,6 +4,8 @@ import com.example.Ecommerce.entity.Customer;
 import com.example.Ecommerce.entity.Product;
 import com.example.Ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,25 +18,25 @@ public class ProductController {
     @Autowired
     ProductService productService;
     @GetMapping("allProducts")
-    public List<Product> viewProducts()
+    public ResponseEntity<List<Product>> viewProducts()
     {
-        return productService.viewAllProducts();
+        return new ResponseEntity<>(productService.viewAllProducts(),HttpStatus.OK);
 
     }
     @GetMapping("findByCategory")
-    public List<String> viewProductCategories()
+    public ResponseEntity<List<String>> viewProductCategories()
     {
-        return productService.viewProductCategories();
+        return new ResponseEntity<>(productService.viewProductCategories(),HttpStatus.FOUND);
     }
     @PostMapping("productRegistration")
-    public String customerRegistration(@RequestBody Product product) {
+    public ResponseEntity<String> customerRegistration(@RequestBody Product product) {
         try {
             System.out.println("Received Product: " + product);
-            return productService.productRegistration(product);
+            return new ResponseEntity<>(productService.productRegistration(product),HttpStatus.CREATED);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error occurred while registering the product.";
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 

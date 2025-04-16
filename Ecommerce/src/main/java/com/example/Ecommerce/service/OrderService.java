@@ -5,6 +5,8 @@ import com.example.Ecommerce.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrderService {
     @Autowired
@@ -47,5 +49,14 @@ public class OrderService {
         }
 
         return String.format("OID%06d", nextNumber);
+    }
+
+    public boolean deleteAllOrders() {
+        orderRepository.deleteAll();
+        return true;
+    }
+
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
     }
 }

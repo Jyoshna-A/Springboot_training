@@ -29,7 +29,7 @@ public class ProductService {
     }
 
     private String generateNextProductNumber() {
-        String lastProNo = productRepository.findLastProductNumber(); // e.g., ACC000025
+        String lastProNo = productRepository.findLastProductNumber();
         int nextNumber = 1;
 
         if (lastProNo != null && lastProNo.startsWith("PID")) {

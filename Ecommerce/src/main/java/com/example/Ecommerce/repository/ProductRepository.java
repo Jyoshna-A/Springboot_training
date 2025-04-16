@@ -8,10 +8,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product,String> {
-    @Query(value = "SELECT product_Id FROM CJ_Product_Details ORDER BY product_Id DESC LIMIT 1", nativeQuery = true)
-    String findLastProductNumber();
-    @Query(value = "SELECT DISTINCT category FROM cj_product_details", nativeQuery = true)
-    List<String> findAllCategories();
+public interface ProductRepository extends JpaRepository<Product, String> {
 
+
+    @Query(value = "SELECT product_Id FROM CJ_Product_Details ORDER BY product_Id DESC FETCH FIRST 1 ROWS ONLY", nativeQuery = true)
+    String findLastProductNumber();
+
+
+    @Query(value = "SELECT DISTINCT category FROM CJ_Product_Details", nativeQuery = true)
+    List<String> findAllCategories();
 }
